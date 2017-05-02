@@ -17,19 +17,67 @@ const auth = require('../helpers/auth-helpers');
 
 
 authRoutes.get('/:userId/show', auth.ensureLoggedIn('/'), (req, res) => {
-  const id = req.params.userId;
-  User.findOne({_id:id},(err,user)=>{
+  const userId = req.params.userId;
+  User.findOne({_id:userId},(err,user)=>{
     res.render("users/show", {user});
   });
 });
 
 authRoutes.get('/:userId/edit', auth.ensureLoggedIn('/'), (req, res) => {
-  const id = req.params.userId;
-  
-  if(id == req.user.id || req.user.role ==='Boss')
+  const userId = req.params.userId;
+
+  if(userId== req.user.id || req.user.role ==='Boss')
   {
-    User.findOne({_id:id},(err,user)=>{
+    User.findOne({_id:userId},(err,user)=>{
       res.render("users/edit", {user});
+    });
+  }
+  else
+  {
+    return res.redirect('/user-list');
+  }
+});
+
+
+authRoutes.post('/:userId/edit', auth.ensureLoggedIn('/'), (req, res) => {
+
+  if(req.params.userId== req.user.id || req.user.role ==='Boss')
+  {
+    const userId = req.params.userId;
+
+    const name        = req.body.name;
+    const username    = req.body.username;
+    const familyName  = req.body.familyName;
+    const password    = req.body.password;
+    const role        = req.body.role;
+
+    if (username === "" || password === "" || role === "") {
+      User.findOne({_id:userId},(err,user)=>{
+        console.log("hi4");
+        res.render("users/edit", { user, message: "Indicate username, password and role" });
+      });
+      return;
+    }
+
+    var salt     = bcrypt.genSaltSync(bcryptSalt);
+    var hashPass = bcrypt.hashSync(password, salt);
+
+    const editUser = {
+      name,
+      username,
+      familyName,
+      password: hashPass,
+      role,
+      _id: req.params.userId
+    };
+
+    User.findByIdAndUpdate(userId, editUser, (err)=>{
+      if(err){
+        next(err);
+      }
+      else {
+        return res.redirect('/user-list');
+      }
     });
   }
   else

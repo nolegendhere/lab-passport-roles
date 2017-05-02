@@ -22,6 +22,17 @@ authRoutes.get('/user-list', auth.checkRoles('Boss'), (req, res) => {
   });
 });
 
+authRoutes.get('/:userId/delete', auth.checkRoles('Boss'), (req, res) => {
+  const id = req.params.userId;
+  User.deleteOne({_id:id},(err)=>{
+    if(err){
+      next(error);
+    }
+    console.log("hi");
+    res.redirect('/user-list');
+  });
+});
+
 authRoutes.get('/create-user', auth.checkRoles('Boss'), (req, res) => {
   res.render("auth/create-user");
 });

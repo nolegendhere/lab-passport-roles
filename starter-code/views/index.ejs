@@ -12,12 +12,12 @@
     <p class="account-message">
       <a href="/logout">Logout</a>
     </p>
+    <p class="account-message">
+      <a href="/user-list">User List</a>
+    </p>
     <%if(currentUser.role==='Boss'){%>
       <p class="account-message">
         <a href="/create-user">Create User</a>
-      </p>
-      <p class="account-message">
-        <a href="/user-list">User List</a>
       </p>
     <%}%>
   <%}else{%>

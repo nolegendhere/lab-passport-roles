@@ -15,10 +15,34 @@ const passport = require("passport");
 const auth = require('../helpers/auth-helpers');
 
 
-authRoutes.get('/user-list', auth.checkRoles('Boss'), (req, res) => {
+
+authRoutes.get('/:userId/show', auth.ensureLoggedIn('/'), (req, res) => {
+  const id = req.params.userId;
+  User.findOne({_id:id},(err,user)=>{
+    res.render("users/show", {user});
+  });
+});
+
+authRoutes.get('/:userId/edit', auth.ensureLoggedIn('/'), (req, res) => {
+  const id = req.params.userId;
+  
+  if(id == req.user.id || req.user.role ==='Boss')
+  {
+    User.findOne({_id:id},(err,user)=>{
+      res.render("users/edit", {user});
+    });
+  }
+  else
+  {
+    return res.redirect('/user-list');
+  }
+});
+
+
+authRoutes.get('/user-list', auth.ensureLoggedIn('/'), (req, res) => {
   User.find((err,users)=>{
     console.log("users",users);
-    res.render("user-list", {users});
+    res.render("users/user-list", {users});
   });
 });
 
@@ -28,7 +52,6 @@ authRoutes.get('/:userId/delete', auth.checkRoles('Boss'), (req, res) => {
     if(err){
       next(error);
     }
-    console.log("hi");
     res.redirect('/user-list');
   });
 });

@@ -8,5 +8,23 @@
 </head>
 <body>
   Hello, Ironhacker!
+  <%if(typeof(currentUser)!=='undefined'){%>
+    <p class="account-message">
+      <a href="/logout">Logout</a>
+    </p>
+    <%if(currentUser.role==='Boss'){%>
+      <p class="account-message">
+        <a href="/create-user">Create User</a>
+      </p>
+      <p class="account-message">
+        <a href="/user-list">User List</a>
+      </p>
+    <%}%>
+  <%}else{%>
+    <p class="account-message">
+      <a href="/login">Login</a>
+    </p>
+  <%}%>
+
 </body>
 </html>

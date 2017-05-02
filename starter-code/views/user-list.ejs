@@ -1,0 +1,9 @@
+<ul>
+  <%if(typeof(users)!=='undefined'){%>
+    <% users.forEach((user)=>{%>
+      <%if(user.role!=='Boss'){%>
+        <li><p><%=user.username%> |<a href="/delete">Delete</a></p></li>
+      <%}%>
+    <%})%>
+  <%}%>
+</ul>
